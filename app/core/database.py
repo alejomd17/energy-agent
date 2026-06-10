@@ -20,7 +20,7 @@ from typing import TypeVar
 
 from bson import ObjectId
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorDatabase
-from pymongo import ASCENDING, DESCENDING
+from pymongo import ASCENDING, DESCENDING, ReturnDocument
 from supabase import Client, create_client
 
 from app.core.config import get_settings
@@ -170,9 +170,19 @@ async def get_latest_analyses(limit: int = 10) -> list[Analysis]:
 # ---------------------------------------------------------------------------
 
 async def insert_newsletter(data: Newsletter) -> str:
+    """
+    Inserta o reemplaza el newsletter de la semana dada (upsert por week_date).
+    Si ya existe un newsletter para esa semana, lo regenera preservando el _id.
+    """
     db = await get_mongo_db()
-    result = await db["newsletters"].insert_one(data.model_dump(exclude={"id"}))
-    return str(result.inserted_id)
+    doc = data.model_dump(exclude={"id"})
+    result = await db["newsletters"].find_one_and_replace(
+        {"week_date": data.week_date},
+        doc,
+        upsert=True,
+        return_document=ReturnDocument.AFTER,
+    )
+    return str(result["_id"])
 
 
 async def get_newsletter(doc_id: str) -> Newsletter | None:

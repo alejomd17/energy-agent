@@ -1,2 +1,1 @@
-# Routers de FastAPI.
-# Cada dominio de la API tiene su propio router registrado aquí.
+"""Capa HTTP de la API — routers FastAPI."""
