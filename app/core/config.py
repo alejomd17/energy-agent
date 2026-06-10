@@ -34,8 +34,14 @@ class Settings(BaseSettings):
     # --- MongoDB ---
     mongodb_uri: str
 
-    # --- Google Gemini ---
+    # --- Google Gemini (solo para embeddings RAG vía EnergyVectorStore) ---
     gemini_api_key: str
+
+    # --- Groq (LLM para agentes — análisis y generación de newsletter) ---
+    groq_api_key: str
+    # Modelos disponibles: llama-3.3-70b-versatile (default, alta calidad),
+    #   llama3-8b-8192 (rápido), mixtral-8x7b-32768 (contexto largo)
+    groq_model: str = "llama-3.3-70b-versatile"
 
     # --- LangSmith (opcional — trazabilidad de agentes LangGraph) ---
     langchain_api_key: str = ""
