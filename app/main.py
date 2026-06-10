@@ -10,17 +10,16 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 
 from app.core.config import get_settings
-from app.core.database import close_mongo_connection, get_mongo_client
+from app.core.database import close_mongo_connection, get_mongo_client, init_indexes
 
 settings = get_settings()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Startup: verificar conectividad con MongoDB
     await get_mongo_client()
+    await init_indexes()
     yield
-    # Shutdown: cerrar conexiones abiertas
     await close_mongo_connection()
 
 
